@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.zitherharp.zhmusic.ui.main.MainFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_main" />
+
+    <fragment
+        android:id="@+id/nav_library"
+        android:name="com.zitherharp.zhmusic.ui.library.LibraryFragment"
+        android:label="@string/menu_library"
+        tools:layout="@layout/fragment_library" />
+
+    <fragment
+        android:id="@+id/nav_playlist"
+        android:name="com.zitherharp.zhmusic.ui.playlist.PlaylistFragment"
+        android:label="@string/menu_playlist"
+        tools:layout="@layout/fragment_playlist" />
+
+    <fragment
+        android:id="@+id/nav_favourite"
+        android:name="com.zitherharp.zhmusic.ui.favourite.FavouriteFragment"
+        android:label="@string/menu_favourite"
+        tools:layout="@layout/fragment_favourite" />
+</navigation>
