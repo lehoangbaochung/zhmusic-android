@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SongProvider {
+    private  static final int ID = -1;
     private static final int TITLE = 0;
     private static final int ALBUM_ID = 1;
     private static final int ALBUM = 2;
@@ -25,6 +26,7 @@ public class SongProvider {
     private static final int YEAR = 7;
 
     private static final String[] BASE_PROJECTION = new String[] {
+        AudioColumns.TITLE_KEY,//-1
         AudioColumns.TITLE,// 0
         AudioColumns.ALBUM_ID,// 1
         AudioColumns.ALBUM,// 2
@@ -60,6 +62,7 @@ public class SongProvider {
 
     @NonNull
     static Song getSongFromCursorImplement(@NonNull Cursor cursor) {
+        final int id = cursor.getInt(ID);
         final String title = cursor.getString(TITLE);
         final String albumId = cursor.getString(ALBUM_ID);
         final String albumName = cursor.getString(ALBUM);
@@ -69,7 +72,7 @@ public class SongProvider {
         final int duration = cursor.getInt(DURATION);
         final int year = cursor.getInt(YEAR);
 
-        return new Song(title, albumId, albumName, artistId, artistName, path, duration, year);
+        return new Song(id, title, albumId, albumName, artistId, artistName, path, duration, year);
     }
 
     @Nullable

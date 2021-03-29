@@ -1,26 +1,24 @@
-package com.zitherharp.zhmusic.ui.library;
+package com.zitherharp.zhmusic.ui.fragment;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zitherharp.zhmusic.R;
 import com.zitherharp.zhmusic.adapter.SongAdapter;
-import com.zitherharp.zhmusic.ui.main.MainViewModel;
+import com.zitherharp.zhmusic.viewmodel.LibraryViewModel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LibraryFragment extends Fragment {
-
     private LibraryViewModel libraryViewModel;
     private ListView listView;
     private SongAdapter songAdapter;
@@ -31,14 +29,22 @@ public class LibraryFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_library, container, false);
         listView = root.findViewById(R.id.lvLibrary);
 
-        String[] from = { "flag", "txt", "cur" };
-        int[] to = { R.id.imageView, R.id.tvTitle, R.id.tvArtist };
+        String[] from = { "file_path", "file_name" };
+        int[] to = { R.id.tvTitle, R.id.tvArtist };
 
-        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), libraryViewModel.getList(),
-                R.layout.listview_item_grid_layout, from, to);
+        ArrayList<HashMap<String,String>> songList = libraryViewModel.getPlayList("/storage/sdcard1/");
+        if(songList!=null){
+            for(int i=0;i<songList.size();i++){
+                String fileName=songList.get(i).get("file_name");
+                String filePath=songList.get(i).get("file_path");
+                //here you will get list of file name and file path that present in your device
+                Log.e("file details "," name ="+fileName +" path = "+filePath);
+            }
+        }
+
+        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), songList, R.layout.fragment_library, from, to);
         listView.setAdapter(adapter);
-//        listView.setOnItemClickListener((parent, view, position, id)
-//                -> Toast.makeText(libraryViewModel.this, "", Toast.LENGTH_SHORT).show());
+
         return root;
     }
 }

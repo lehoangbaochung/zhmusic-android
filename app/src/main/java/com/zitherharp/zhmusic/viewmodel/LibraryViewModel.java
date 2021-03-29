@@ -1,14 +1,11 @@
-package com.zitherharp.zhmusic.ui.library;
+package com.zitherharp.zhmusic.viewmodel;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.widget.ListView;
 
 import com.zitherharp.zhmusic.R;
-import com.zitherharp.zhmusic.adapter.SongAdapter;
 import com.zitherharp.zhmusic.model.Song;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,13 +43,22 @@ public class LibraryViewModel extends ViewModel {
                 R.drawable.download_icon,
         };
 
-        for (int i=0; i<10; i++) {
+//        List<Song> songs = new SongAdapter().getSongList();
+//        for (Song song : songs) {
+//            HashMap<String, String> hm = new HashMap<>();
+//            hm.put("txt", song.title);
+//            hm.put("cur", song.artistName);
+//            aList.add(hm);
+//        }
+        for (int i = 0; i < 10; i++) {
             HashMap<String, String> hm = new HashMap<>();
             hm.put("txt", "App Name : " + mNames[i]);
             hm.put("cur","creator : " + mAnimals[i]);
             hm.put("flag", Integer.toString(flags[i]) );
+
             aList.add(hm);
         }
+
     }
 
     public List<Song> getSongs() {
@@ -61,5 +67,30 @@ public class LibraryViewModel extends ViewModel {
 
     public List<HashMap<String,String>> getList() {
         return aList;
+    }
+
+    public ArrayList<HashMap<String,String>> getPlayList(String rootPath) {
+        ArrayList<HashMap<String,String>> fileList = new ArrayList<>();
+        try {
+            File rootFolder = new File(rootPath);
+            File[] files = rootFolder.listFiles(); //here you will get NPE if directory doesn't contains  any file,handle it like this.
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (getPlayList(file.getAbsolutePath()) != null) {
+                        fileList.addAll(getPlayList(file.getAbsolutePath()));
+                    } else {
+                        break;
+                    }
+                } else if (file.getName().endsWith(".mp3")) {
+                    HashMap<String, String> song = new HashMap<>();
+                    song.put("file_path", file.getAbsolutePath());
+                    song.put("file_name", file.getName());
+                    fileList.add(song);
+                }
+            }
+            return fileList;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

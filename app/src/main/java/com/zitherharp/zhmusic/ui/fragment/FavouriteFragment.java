@@ -1,4 +1,4 @@
-package com.zitherharp.zhmusic.ui.playlist;
+package com.zitherharp.zhmusic.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,18 +11,19 @@ import android.support.v4.app.Fragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import com.zitherharp.zhmusic.R;
+import com.zitherharp.zhmusic.viewmodel.FavouriteViewModel;
 
-public class PlaylistFragment extends Fragment {
+public class FavouriteFragment extends Fragment {
 
-    private PlaylistViewModel galleryViewModel;
+    private FavouriteViewModel favouriteViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(PlaylistViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_playlist, container, false);
-        final TextView textView = root.findViewById(R.id.text_playlist);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        favouriteViewModel =
+                new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavouriteViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_favourite, container, false);
+        final TextView textView = root.findViewById(R.id.text_favourite);
+        favouriteViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

@@ -1,4 +1,4 @@
-package com.zitherharp.zhmusic.ui.main;
+package com.zitherharp.zhmusic.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

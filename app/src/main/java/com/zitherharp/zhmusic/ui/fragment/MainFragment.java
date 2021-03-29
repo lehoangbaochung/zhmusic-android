@@ -1,4 +1,4 @@
-package com.zitherharp.zhmusic.ui.main;
+package com.zitherharp.zhmusic.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
