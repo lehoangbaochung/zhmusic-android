@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel;
 import com.zitherharp.zhmusic.R;
 import com.zitherharp.zhmusic.model.Song;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +16,8 @@ public class LibraryViewModel extends ViewModel {
     private List<HashMap<String,String>> aList;
 
     public LibraryViewModel() {
-        // mSong = new MutableLiveData<>();
-//        lSong = new ArrayList<>();
-//        lSong.add(new Song("Hello", "1", "2", "3", "Hary", "4", 0, 0));
-//        lSong.add(new Song("Hell", "2", "2", "3", "Hay", "4", 0, 0));
-//        lSong.add(new Song("Heo", "3", "12", "5", "Ha", "1", 0, 0));
-//        lSong.add(new Song("He", "4", "4", "1", "Har", "2", 0, 0));
         aList = new ArrayList<>();
+
         String[] mNames = { "Fabian", "Carlos", "Alex", "Andrea", "Karla",
                 "Freddy", "Lazaro", "Hector", "Carolina", "Edwin", "Jhon",
                 "Edelmira", "Andres" };
@@ -63,34 +57,5 @@ public class LibraryViewModel extends ViewModel {
 
     public List<Song> getSongs() {
         return lSong;
-    }
-
-    public List<HashMap<String,String>> getList() {
-        return aList;
-    }
-
-    public ArrayList<HashMap<String,String>> getPlayList(String rootPath) {
-        ArrayList<HashMap<String,String>> fileList = new ArrayList<>();
-        try {
-            File rootFolder = new File(rootPath);
-            File[] files = rootFolder.listFiles(); //here you will get NPE if directory doesn't contains  any file,handle it like this.
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    if (getPlayList(file.getAbsolutePath()) != null) {
-                        fileList.addAll(getPlayList(file.getAbsolutePath()));
-                    } else {
-                        break;
-                    }
-                } else if (file.getName().endsWith(".mp3")) {
-                    HashMap<String, String> song = new HashMap<>();
-                    song.put("file_path", file.getAbsolutePath());
-                    song.put("file_name", file.getName());
-                    fileList.add(song);
-                }
-            }
-            return fileList;
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

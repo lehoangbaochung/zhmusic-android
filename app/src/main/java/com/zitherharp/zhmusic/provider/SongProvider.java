@@ -1,7 +1,10 @@
 package com.zitherharp.zhmusic.provider;
 
+import android.content.ContentProvider;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.support.annotation.NonNull;
@@ -14,7 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class SongProvider {
+public class SongProvider extends ContentProvider {
     private  static final int ID = -1;
     private static final int TITLE = 0;
     private static final int ALBUM_ID = 1;
@@ -92,5 +95,38 @@ public class SongProvider {
                 return Integer.compare(obj1.duration, obj2.duration);
             }
         });
+    }
+
+    @Override
+    public boolean onCreate() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+        return null;
+    }
+
+    @Override
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        return 0;
+    }
+
+    @Override
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+        return 0;
     }
 }

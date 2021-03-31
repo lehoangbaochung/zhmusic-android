@@ -29,10 +29,10 @@ public class SongAdapter extends BaseAdapter {
     public int getCount() { return songs.size(); }
 
     @Override
-    public Object getItem(int position) { return null; }
+    public Object getItem(int position) { return songs.get(position); }
 
     @Override
-    public long getItemId(int position) { return 0; }
+    public long getItemId(int position) { return songs.get(position).id; }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -51,7 +51,6 @@ public class SongAdapter extends BaseAdapter {
 
         // Cài đặt tag cho mỗi bài
         songLayout.setTag(position);
-
 
         return songLayout;
     }

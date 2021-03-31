@@ -1,7 +1,6 @@
 package com.zitherharp.zhmusic.ui.activity;
 
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
@@ -17,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.MediaController;
 
 import androidx.navigation.NavController;
@@ -31,6 +29,7 @@ import com.zitherharp.zhmusic.model.Song;
 import com.zitherharp.zhmusic.service.PlayerService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 //public class MainActivity extends AppCompatActivity {
 //    private AppBarConfiguration mAppBarConfiguration;
@@ -111,8 +110,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     private Toolbar toolbar;
     public View playerView;
     ImageView imageView;
-    private ArrayList<Song> songList;
-    private ListView songView;
+    public static ArrayList<Song> songList;
     private PlayerService PlayerService;
     private Intent playIntent;
     private boolean musicBound = false;
@@ -153,17 +151,14 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
 //
 //        // Retrieve list menu
 //        songView = findViewById(R.id.lvLibrary);
-//        // Instantiate song list
-//        songList = new ArrayList<>();
-//        // Get songs from device
-//        getSongList();
-//        Log.e("ListCount", songList.size() + "");
-//        // Sort alphabetically by title
-//        Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
-//        // Create and set adapter
-//        SongAdapter songAdapter = new SongAdapter(this, songList);
-//        songView.setAdapter(songAdapter); // null pointer
-//        setController();
+        // Instantiate song list
+        songList = new ArrayList<>();
+        // Get songs from device
+        getSongList();
+        // Sort alphabetically by title
+        Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
+
+        setController();
     }
 
     @Override
@@ -197,9 +192,8 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     // Method to retrieve song infos from device
     public void getSongList() {
         // Query external audio resources
-        ContentResolver musicResolver = getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        Cursor musicCursor = getContentResolver().query(musicUri, null, null, null, null);
         // Iterate over results if valid
         if (musicCursor != null && musicCursor.moveToFirst()) {
             // Get columns
@@ -246,10 +240,10 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.next_song_button:
+            case R.id.option_button:
                 PlayerService.setShuffle();
                 break;
-            case R.id.collapse_button:
+            case R.id.prev_song_button:
                 stopService(playIntent);
                 PlayerService = null;
                 System.exit(0);

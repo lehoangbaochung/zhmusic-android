@@ -1,5 +1,7 @@
 package com.zitherharp.zhmusic.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -54,7 +56,7 @@ public class Song {
         this.year = year;
     }
 
-    public static String formatDuration(int duration) {
+    public static @NotNull String formatDuration(int duration) {
         return String.format(Locale.getDefault(), "%02d:%02d",
              TimeUnit.MILLISECONDS.toMinutes(duration), TimeUnit.MILLISECONDS.toSeconds(duration) -
              TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
@@ -66,5 +68,6 @@ public class Song {
 
     public String getArtistName() { return artistName; }
 
+    public String getAlbumId() { return albumId; }
 
 }
