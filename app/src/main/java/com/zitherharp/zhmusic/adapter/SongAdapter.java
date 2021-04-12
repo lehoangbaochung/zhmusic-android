@@ -26,21 +26,26 @@ public class SongAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() { return songs.size(); }
+    public int getCount() {
+        return songs.size();
+    }
 
     @Override
-    public Object getItem(int position) { return songs.get(position); }
+    public Object getItem(int position) {
+        return songs.get(position);
+    }
 
     @Override
-    public long getItemId(int position) { return songs.get(position).id; }
+    public long getItemId(int position) {
+        return position;
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Ánh xạ đến layout mỗi bài
         LinearLayout songLayout = (LinearLayout)songInf.inflate(R.layout.listview_item_grid_layout, parent, false);
-
-        TextView songView = songLayout.findViewById(R.id.tvTitle);
-        TextView artistView = songLayout.findViewById(R.id.tvArtist);
+        TextView songView = songLayout.findViewById(R.id.song_title);
+        TextView artistView = songLayout.findViewById(R.id.artist_name);
 
         // Lấy bài hát
         Song currentSong = songs.get(position);
@@ -51,7 +56,6 @@ public class SongAdapter extends BaseAdapter {
 
         // Cài đặt tag cho mỗi bài
         songLayout.setTag(position);
-
         return songLayout;
     }
 }

@@ -19,14 +19,14 @@ public class Song {
     public final int duration;
     final int year;
 
-    public Song(int id, String title, String artistName) {
+    public Song(int id, String title, String artistName, String pathUri) {
         this.id = id;
         this.title = title;
         this.albumId = null;
         this.albumName = null;
         this.artistId = null;
         this.artistName = artistName;
-        this.path = null;
+        this.path = pathUri;
         this.duration = 0;
         this.year = 0;
     }

@@ -1,223 +1,68 @@
 package com.zitherharp.zhmusic.ui.activity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.net.Uri;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.navigation.NavigationView;
 import com.zitherharp.zhmusic.R;
+import com.zitherharp.zhmusic.controller.MusicController;
 import com.zitherharp.zhmusic.controller.PlayerController;
 import com.zitherharp.zhmusic.model.Song;
-import com.zitherharp.zhmusic.service.PlayerService;
+import com.zitherharp.zhmusic.player.SongPlayer;
+import com.zitherharp.zhmusic.provider.SongProvider;
+import com.zitherharp.zhmusic.service.MusicService;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-//public class MainActivity extends AppCompatActivity {
-//    private AppBarConfiguration mAppBarConfiguration;
-//    private NavController navController;
-//    private  Toolbar toolbar;
-//    Context context;
-//    public static final int RUNTIME_PERMISSION_CODE = 7;
-//    String[] ListElements = new String[] { };
-//    ListView listView;
-//    List<String> ListElementsArrayList ;
-//    ArrayAdapter<String> adapter ;
-//    ContentResolver contentResolver;
-//    Cursor cursor;
-//    Uri uri;
-//    Button button;
-//    ImageView imageView;
-//    public static View playerView;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        listView = findViewById(R.id.lvLibrary);
-//        imageView = findViewById(R.id.play_button);
-//        context = this;
-//        ListElementsArrayList = new ArrayList<>(Arrays.asList(ListElements));
-//        adapter = new ArrayAdapter<String>
-//                (MainActivity.this, android.R.layout.simple_gallery_item, ListElementsArrayList);
-//
-//        playerView = findViewById(R.id.play_control_layout);
-//        toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        NavigationView navigationView = findViewById(R.id.nav_view);
-//
-//        mAppBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.nav_home, R.id.nav_library, R.id.nav_playlist, R.id.nav_favourite)
-//                .setDrawerLayout(drawer).build();
-//        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//
-//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-//        NavigationUI.setupWithNavController(navigationView, navController);
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onSupportNavigateUp() {
-//        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
-//    }
-//
-//    public void goPlayerFragment(View view) {
-//        view.setVisibility(View.GONE);
-//        toolbar.setVisibility(View.GONE);
-//        navController.navigate(R.id.nav_player);
-//        AndroidRuntimePermission();
-//        if (playerView == null) {
-//            playerView = view;
-//        }
-//    }
-//
-//    public void backMainFragment(View view) {
-//        playerView.setVisibility(View.VISIBLE);
-//        toolbar.setVisibility(View.VISIBLE);
-//        navController.navigate(R.id.nav_home);
-//    }
+public class MainActivity extends AppCompatActivity {
+    static final int LAUNCH_SIGNIN_ACTIVITY = 1000;
 
-public class MainActivity extends AppCompatActivity implements MediaController.MediaPlayerControl {
-    private AppBarConfiguration mAppBarConfiguration;
-    private NavController navController;
-    private Toolbar toolbar;
-    public View playerView;
-    ImageView imageView;
+    AppBarConfiguration mAppBarConfiguration;
+    NavController navController;
+    Toolbar toolbar;
+    TextView tvNavHeaderTitle, tvNavHeaderSubtitle;
+    ImageView ivNavHeaderImage;
+    SongPlayer songPlayer;
+    MediaPlayer mediaPlayer;
+    Intent playIntent;
+
     public static ArrayList<Song> songList;
-    private PlayerService PlayerService;
-    private Intent playIntent;
+    private MusicService playerService;
     private boolean musicBound = false;
-    private PlayerController controller;
-    private boolean paused = false;
-    private boolean playbackPaused = false;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (playIntent == null) {
-            playIntent = new Intent(this, PlayerService.class);
-            bindService(playIntent, musicConnection, BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        imageView = findViewById(R.id.play_button);
-        playerView = findViewById(R.id.play_control_layout);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_library, R.id.nav_playlist, R.id.nav_favourite)
-                .setDrawerLayout(drawer).build();
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-//
-//        // Retrieve list menu
-//        songView = findViewById(R.id.lvLibrary);
-        // Instantiate song list
-        songList = new ArrayList<>();
-        // Get songs from device
-        getSongList();
-        // Sort alphabetically by title
-        Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
-
-        setController();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
-    }
-
-    public void goPlayerFragment(View view) {
-        view.setVisibility(View.GONE);
-        toolbar.setVisibility(View.GONE);
-        navController.navigate(R.id.nav_player);
-
-        if (playerView == null) {
-            playerView = view;
-        }
-    }
-
-    public void backMainFragment(View view) {
-        playerView.setVisibility(View.VISIBLE);
-        toolbar.setVisibility(View.VISIBLE);
-        navController.navigate(R.id.nav_home);
-    }
-
-    // Method to retrieve song infos from device
-    public void getSongList() {
-        // Query external audio resources
-        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = getContentResolver().query(musicUri, null, null, null, null);
-        // Iterate over results if valid
-        if (musicCursor != null && musicCursor.moveToFirst()) {
-            // Get columns
-            int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-
-            do {
-                int thisId = musicCursor.getInt(idColumn);
-                String thisTitle = musicCursor.getString(titleColumn);
-                String thisArtist = musicCursor.getString(artistColumn);
-                songList.add(new Song(thisId, thisTitle, thisArtist));
-            }
-            while (musicCursor.moveToNext());
-        }
-    }
+    MusicController controller;
+    PlayerController playerController;
+    boolean playbackPaused = false;
 
     // Connect with the service
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            PlayerService.MusicBinder binder = (PlayerService.MusicBinder) service;
-            PlayerService = binder.getService();
-            PlayerService.setList(songList);
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            playerService = binder.getService();
+            playerService.setList(songList);
             musicBound = true;
         }
 
@@ -227,48 +72,97 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         }
     };
 
-    public void songPicked(View v) {
-        PlayerService.setSong(Integer.parseInt(v.getTag().toString()));
-        PlayerService.playSong();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
+        @Override
+    protected void onStart() {
+        super.onStart();
+        if (playIntent == null) {
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, BIND_AUTO_CREATE);
+            startService(playIntent);
         }
-        controller.show(0);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.option_button:
-                PlayerService.setShuffle();
-                break;
-            case R.id.prev_song_button:
-                stopService(playIntent);
-                PlayerService = null;
-                System.exit(0);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        findViewById();
+        initialize();
     }
 
     @Override
-    protected void onDestroy() {
-        stopService(playIntent);
-        PlayerService = null;
-        super.onDestroy();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
-    private void setController() {
-        controller = new PlayerController(this);
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LAUNCH_SIGNIN_ACTIVITY) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Nhận dữ liệu từ Intent trả về
+                final String account_display_name = data.getStringExtra("account_display_name");
+                final String account_user_name = data.getStringExtra("account_user_name");
+                //final String account_photo_uri = data.getStringExtra("account_photo_uri");
+                // Sử dụng kết quả result bằng cách hiện Toast
+                tvNavHeaderTitle.setText(account_display_name);
+                tvNavHeaderSubtitle.setText(account_user_name);
+                //ivNavHeaderImage.setImageURI(Uri.parse(account_photo_uri));
+            } else {
+                Toast.makeText(this, "Sign in unsucessfully", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    void findViewById() {
+        // toolbar
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // drawerLayout
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // navigationView
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        tvNavHeaderTitle = navigationView.getHeaderView(0).findViewById(R.id.nav_user_name);
+        tvNavHeaderSubtitle = navigationView.getHeaderView(0).findViewById(R.id.nav_user_info);
+        ivNavHeaderImage = navigationView.getHeaderView(0).findViewById(R.id.nav_user_avatar);
+        // appBarConfiguration
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_library, R.id.nav_playlist, R.id.nav_favourite)
+                .setDrawerLayout(drawer).build();
+        // navigationController
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    void initialize() {
+        mediaPlayer = new MediaPlayer();
+        songPlayer = new SongPlayer(this);
+        SongProvider songProvider = new SongProvider(this);
+        songList = songProvider.getSongList();
+        Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
+    }
+
+    public void songPicked(@NotNull View v) throws IOException {
+
+    }
+
+    void setController() {
+        controller = new MusicController(this);
         controller.setPrevNextListeners(v -> playNext(), v -> playPrev());
-        controller.setMediaPlayer(this);
+        controller.setMediaPlayer((MediaController.MediaPlayerControl) this);
         controller.setAnchorView(findViewById(R.id.lvLibrary));
         controller.setEnabled(true);
     }
 
-    private void playNext() {
-        PlayerService.playNext();
+    void playNext() {
+        playerService.playNext();
         if (playbackPaused) {
             setController();
             playbackPaused = false;
@@ -276,8 +170,8 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         controller.show(0);
     }
 
-    private void playPrev() {
-        PlayerService.playPrev();
+    void playPrev() {
+        playerService.playPrev();
         if (playbackPaused) {
             setController();
             playbackPaused = false;
@@ -285,88 +179,13 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         controller.show(0);
     }
 
-    @Override
-    public boolean canPause() {
-        return true;
+    public void goSigninActivity(View v) {
+        startActivityForResult(
+                new Intent(this, SigninActivity.class), LAUNCH_SIGNIN_ACTIVITY);
     }
 
-    @Override
-    public boolean canSeekBackward() {
-        return true;
+    public void goPlayerActivity(View v) {
+        Intent playerIntent = new Intent(this, PlayerActivity.class);
+        startActivity(playerIntent);
     }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        paused = true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (paused) {
-            setController();
-            paused = false;
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        controller.hide();
-        super.onStop();
-    }
-
-    @Override
-    public void start() {
-        PlayerService.go();
-    }
-
-    @Override
-    public void pause() {
-        playbackPaused = true;
-        PlayerService.pausePlayer();
-    }
-
-    @Override
-    public int getDuration() {
-        if (PlayerService != null && musicBound && PlayerService.isPlaying()) {
-            return PlayerService.getDur();
-        }
-        return 0;
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        return 0;
-    }
-
-    @Override
-    public void seekTo(int pos) {
-        PlayerService.seek(pos);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        if (PlayerService != null && musicBound) {
-            return PlayerService.isPlaying();
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
-
 }
