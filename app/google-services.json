@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "560285959775",
+    "project_id": "zh-music-1617505883522",
+    "storage_bucket": "zh-music-1617505883522.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560285959775:android:7b48f231dde511089dbdea",
+        "android_client_info": {
+          "package_name": "com.zitherharp.zhmusic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "560285959775-u7ceuhe207afvb7ofsqbtm04jks8crum.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zitherharp.zhmusic",
+            "certificate_hash": "f9ba8d23ba99c94b2dbc5e44aeeb957043e889b7"
+          }
+        },
+        {
+          "client_id": "560285959775-6luktfphomcgq7gtu4j6ad0r4s18gs59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLjnTkCrqma3x_VFe-oN6sH6sJ1rkDSzg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "560285959775-6luktfphomcgq7gtu4j6ad0r4s18gs59.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
