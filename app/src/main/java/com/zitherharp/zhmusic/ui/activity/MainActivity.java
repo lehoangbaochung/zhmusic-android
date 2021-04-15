@@ -1,16 +1,14 @@
 package com.zitherharp.zhmusic.ui.activity;
 
 import android.app.Activity;
-import android.content.ComponentName;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,63 +22,25 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.zitherharp.zhmusic.R;
-import com.zitherharp.zhmusic.controller.MusicController;
-import com.zitherharp.zhmusic.controller.PlayerController;
 import com.zitherharp.zhmusic.model.Song;
-import com.zitherharp.zhmusic.player.SongPlayer;
+import com.zitherharp.zhmusic.provider.FirebaseProvider;
 import com.zitherharp.zhmusic.provider.SongProvider;
-import com.zitherharp.zhmusic.service.MusicService;
+import com.zitherharp.zhmusic.util.IntentCode;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
-    static final int LAUNCH_SIGNIN_ACTIVITY = 1000;
-
     AppBarConfiguration mAppBarConfiguration;
     NavController navController;
     Toolbar toolbar;
     TextView tvNavHeaderTitle, tvNavHeaderSubtitle;
     ImageView ivNavHeaderImage;
-    SongPlayer songPlayer;
-    MediaPlayer mediaPlayer;
-    Intent playIntent;
-
     public static ArrayList<Song> songList;
-    private MusicService playerService;
-    private boolean musicBound = false;
-    MusicController controller;
-    PlayerController playerController;
-    boolean playbackPaused = false;
+    public static ArrayList<Song> onlineSongList;
 
-    // Connect with the service
-    private ServiceConnection musicConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
-            playerService = binder.getService();
-            playerService.setList(songList);
-            musicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
-
-        @Override
-    protected void onStart() {
-        super.onStart();
-        if (playIntent == null) {
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +48,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViewById();
         initialize();
+        displaySignInAccount();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
         return true;
     }
 
@@ -104,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LAUNCH_SIGNIN_ACTIVITY) {
+        if (requestCode == 100) {
             if (resultCode == Activity.RESULT_OK) {
                 // Nhận dữ liệu từ Intent trả về
                 final String account_display_name = data.getStringExtra("account_display_name");
@@ -124,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         // toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // drawerLayout
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         // navigationView
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -133,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         ivNavHeaderImage = navigationView.getHeaderView(0).findViewById(R.id.nav_user_avatar);
         // appBarConfiguration
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_library, R.id.nav_playlist, R.id.nav_favourite)
+                R.id.nav_home, R.id.nav_online, R.id.nav_offline, R.id.nav_playlist)
                 .setDrawerLayout(drawer).build();
         // navigationController
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -142,50 +102,70 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initialize() {
-        mediaPlayer = new MediaPlayer();
-        songPlayer = new SongPlayer(this);
         SongProvider songProvider = new SongProvider(this);
         songList = songProvider.getSongList();
         Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
+
+        FirebaseProvider firebaseProvider = new FirebaseProvider();
+        onlineSongList = firebaseProvider.getSongs();
     }
 
-    public void songPicked(@NotNull View v) throws IOException {
+    public void songPicked(@NotNull View v) {
+        TextView tvSongTitle = v.findViewById(R.id.song_title);
+        TextView tvArtistName = v.findViewById(R.id.artist_name);
+        String songTitle = tvSongTitle.getText().toString();
+        String artistName = tvArtistName.getText().toString();
+        String songFullTitle = songTitle + " - " + artistName;
+        String videoId = v.getTag().toString();
 
-    }
+        Intent playSong = new Intent(this, PlayerActivity.class);
+        playSong.putExtra("song_title", songTitle);
+        playSong.putExtra("artist_name", artistName);
+        playSong.putExtra("song_full_title", songFullTitle);
+        playSong.putExtra("video_id", videoId);
+        startActivity(playSong);
 
-    void setController() {
-        controller = new MusicController(this);
-        controller.setPrevNextListeners(v -> playNext(), v -> playPrev());
-        controller.setMediaPlayer((MediaController.MediaPlayerControl) this);
-        controller.setAnchorView(findViewById(R.id.lvLibrary));
-        controller.setEnabled(true);
-    }
-
-    void playNext() {
-        playerService.playNext();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
-    void playPrev() {
-        playerService.playPrev();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
+        Toast.makeText(this, "Playing: " + songFullTitle, Toast.LENGTH_LONG).show();
     }
 
     public void goSigninActivity(View v) {
-        startActivityForResult(
-                new Intent(this, SigninActivity.class), LAUNCH_SIGNIN_ACTIVITY);
+        startActivityForResult(new Intent(this, SigninActivity.class), IntentCode.SIGN_IN);
     }
 
-    public void goPlayerActivity(View v) {
-        Intent playerIntent = new Intent(this, PlayerActivity.class);
-        startActivity(playerIntent);
+    public void addPlaylist(MenuItem item) {
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);
+
+        ad.setTitle("Create a new playlist");
+        ad.setMessage("Playlist title:");
+
+        final EditText input = new EditText(this);
+        ad.setView(input);
+        ad.setPositiveButton("OK", (dlg, which) -> {
+            String val = input.getText().toString();
+            String msg = String.format("Hello %s!", val);
+        });
+
+        ad.setNegativeButton("Cancel", (dlg, which) -> dlg.cancel());
+        ad.show();
+    }
+
+    public void goAboutActivity(MenuItem item) {
+        startActivity(new Intent(this, AboutActivity.class));
+    }
+
+    void displaySignInAccount() {
+        String accountName = getIntent().getStringExtra("account_name");
+        String accountInfo = getIntent().getStringExtra("account_info");
+
+        if (accountName == null) {
+            tvNavHeaderTitle.setText("Log in");
+        } else {
+            tvNavHeaderTitle.setText(accountName);
+        }
+        if (accountInfo == null) {
+            tvNavHeaderSubtitle.setText("You have not sign in yet");
+        } else {
+            tvNavHeaderSubtitle.setText(accountInfo);
+        }
     }
 }

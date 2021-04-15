@@ -11,45 +11,21 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Audio.AudioColumns;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.zitherharp.zhmusic.model.Song;
 import com.zitherharp.zhmusic.ui.activity.MainActivity;
+import com.zitherharp.zhmusic.util.DatabaseHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class SongProvider extends ContentProvider {
     MainActivity mainActivity;
     public static ArrayList<Song> songs;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
-
-    private static final int ID = -1;
-    private static final int TITLE = 0;
-    private static final int ALBUM_ID = 1;
-    private static final int ALBUM = 2;
-    private static final int ARTIST_ID = 3;
-    private static final int ARTIST = 4;
-    private static final int PATH = 5;
-    private static final int DURATION = 6;
-    private static final int YEAR = 7;
-
-    private static final String[] BASE_PROJECTION = new String[] {
-        AudioColumns.TITLE_KEY,//-1
-        AudioColumns.TITLE,// 0
-        AudioColumns.ALBUM_ID,// 1
-        AudioColumns.ALBUM,// 2
-        AudioColumns.ARTIST_ID,// 3
-        AudioColumns.ARTIST,// 4
-        AudioColumns.DATA,// 5
-        AudioColumns.DURATION,// 6
-        AudioColumns.YEAR,// 7
-    };
 
     public SongProvider() {}
 
@@ -87,56 +63,7 @@ public class SongProvider extends ContentProvider {
         return songs;
     }
 
-    @NonNull
-    static void getSongs(@Nullable final Cursor cursor) {
-        ArrayList<Song> songs = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                if (getSongFromCursorImplement(cursor).duration >= 5000) {
-                    songs.add(getSongFromCursorImplement(cursor));
-                }
-            }
-            while (cursor.moveToNext());
-        }
 
-        if (cursor != null) {
-            cursor.close();
-        }
-
-        if (songs.size() > 1) {
-            sortSongsByDuration(songs);
-        }
-    }
-
-    @NonNull
-    static Song getSongFromCursorImplement(@NonNull Cursor cursor) {
-        final int id = cursor.getInt(ID);
-        final String title = cursor.getString(TITLE);
-        final String albumId = cursor.getString(ALBUM_ID);
-        final String albumName = cursor.getString(ALBUM);
-        final String artistId = cursor.getString(ARTIST_ID);
-        final String artistName = cursor.getString(ARTIST);
-        final String path = cursor.getString(PATH);
-        final int duration = cursor.getInt(DURATION);
-        final int year = cursor.getInt(YEAR);
-
-        return new Song(id, title, albumId, albumName, artistId, artistName, path, duration, year);
-    }
-
-    @Nullable
-    static Cursor makeSongCursor(@NonNull final Context context, final String sortOrder) {
-        try {
-            return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                BASE_PROJECTION, null, null, sortOrder);
-        }
-        catch (SecurityException e) {
-            return null;
-        }
-    }
-
-    private static void sortSongsByDuration(List<Song> songs) {
-        Collections.sort(songs, (obj1, obj2) -> Integer.compare(obj1.duration, obj2.duration));
-    }
 
     @Override
     public boolean onCreate() {
@@ -156,7 +83,7 @@ public class SongProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(DatabaseHelper.SONGS_TABLE_NAME);
+        qb.setTables(DatabaseHelper.PLAYLISTS_TABLE_NAME);
 
 //        switch (DatabaseHelper.uriMatcher.match(uri)) {
 //            case DatabaseHelper.SONGS:

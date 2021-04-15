@@ -14,8 +14,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Zhmusic"
-        android:requestLegacyExternalStorage="true" >
+        android:theme="@style/Theme.Zhmusic">
         <activity
             android:name=".ui.activity.PlayerActivity"
             android:theme="@style/Theme.Zhmusic.NoActionBar"
@@ -24,24 +23,23 @@
         <activity
             android:name=".ui.activity.SigninActivity"
             android:theme="@style/Theme.Zhmusic.NoActionBar"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:label="Sign in">
         </activity>
         <activity
+            android:name=".ui.activity.AboutActivity"
+            android:launchMode="singleTask"/>
+        <activity
             android:name=".ui.activity.MainActivity"
-            android:theme="@style/Theme.Zhmusic.NoActionBar"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Zhmusic.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <provider
-            android:authorities="com.zitherharp.zhmusic.provider.Music"
-            android:name=".provider.SongProvider" />
-        <service android:name=".service.MusicService" />
-
     </application>
 
 </manifest>

@@ -6,32 +6,26 @@
     app:startDestination="@+id/nav_home">
 
     <fragment
-        android:id="@+id/nav_player"
-        android:name="com.zitherharp.zhmusic.ui.fragment.PlayerFragment"
-        android:label="Player"
-        tools:layout="@layout/fragment_player" />
-
-    <fragment
         android:id="@+id/nav_home"
-        android:name="com.zitherharp.zhmusic.ui.fragment.MainFragment"
+        android:name="com.zitherharp.zhmusic.ui.fragment.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_library"
-        android:name="com.zitherharp.zhmusic.ui.fragment.LibraryFragment"
-        android:label="@string/menu_library"
-        tools:layout="@layout/fragment_library" />
+        android:id="@+id/nav_online"
+        android:name="com.zitherharp.zhmusic.ui.fragment.OnlineFragment"
+        android:label="@string/menu_online"
+        tools:layout="@layout/fragment_online" />
+
+    <fragment
+        android:id="@+id/nav_offline"
+        android:name="com.zitherharp.zhmusic.ui.fragment.OfflineFragment"
+        android:label="@string/menu_offline"
+        tools:layout="@layout/fragment_offline" />
 
     <fragment
         android:id="@+id/nav_playlist"
         android:name="com.zitherharp.zhmusic.ui.fragment.PlaylistFragment"
         android:label="@string/menu_playlist"
         tools:layout="@layout/fragment_playlist" />
-
-    <fragment
-        android:id="@+id/nav_favourite"
-        android:name="com.zitherharp.zhmusic.ui.fragment.FavouriteFragment"
-        android:label="@string/menu_favourite"
-        tools:layout="@layout/fragment_favourite" />
 </navigation>

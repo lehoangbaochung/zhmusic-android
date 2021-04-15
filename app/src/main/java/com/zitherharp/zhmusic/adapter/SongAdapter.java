@@ -15,19 +15,19 @@ import com.zitherharp.zhmusic.model.Song;
 import java.util.ArrayList;
 
 public class SongAdapter extends BaseAdapter {
-    // Song list và layout
-    private ArrayList<Song> songs;
-    private LayoutInflater songInf;
+    ArrayList<Song> songs;
+    LayoutInflater layoutInflater;
+    boolean isOnline;
 
-    // Constructor
-    public SongAdapter(Context c, ArrayList<Song> theSongs) {
-        songs = theSongs;
-        songInf = LayoutInflater.from(c);
+    public SongAdapter(Context c, ArrayList<Song> songs, boolean isOnline) {
+        this.songs = songs;
+        this.isOnline = isOnline;
+        layoutInflater = LayoutInflater.from(c);
     }
 
     @Override
     public int getCount() {
-        return songs.size();
+        return songs == null ? 0 : songs.size();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SongAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Ánh xạ đến layout mỗi bài
-        LinearLayout songLayout = (LinearLayout)songInf.inflate(R.layout.listview_item_grid_layout, parent, false);
+        LinearLayout songLayout = (LinearLayout)layoutInflater.inflate(R.layout.listview_item_tile, parent, false);
         TextView songView = songLayout.findViewById(R.id.song_title);
         TextView artistView = songLayout.findViewById(R.id.artist_name);
 
@@ -55,7 +55,12 @@ public class SongAdapter extends BaseAdapter {
         artistView.setText(currentSong.getArtistName());
 
         // Cài đặt tag cho mỗi bài
-        songLayout.setTag(position);
+        if (isOnline) {
+            songLayout.setTag(currentSong.getVideoId());
+        } else {
+            songLayout.setTag(position);
+        }
+
         return songLayout;
     }
 }
