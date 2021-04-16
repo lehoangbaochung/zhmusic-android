@@ -38,10 +38,10 @@
             </intent-filter>
         </activity>
 
-<!--        <provider-->
-<!--            android:name=".provider.PlaylistProvider"-->
-<!--            android:authorities="com.zitherharp.zhmusic.provider"-->
-<!--            android:multiprocess="true"/>-->
+        <provider
+            android:name=".provider.PlaylistProvider"
+            android:authorities="com.zitherharp.zhmusic.provider"
+            android:multiprocess="true"/>
     </application>
 
 </manifest>
