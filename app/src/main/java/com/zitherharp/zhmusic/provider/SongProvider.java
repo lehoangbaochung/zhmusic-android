@@ -4,13 +4,12 @@ import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +17,7 @@ import androidx.annotation.Nullable;
 import com.zitherharp.zhmusic.model.Song;
 import com.zitherharp.zhmusic.ui.activity.MainActivity;
 import com.zitherharp.zhmusic.util.DatabaseHelper;
+import com.zitherharp.zhmusic.util.ProviderHelper;
 
 import java.util.ArrayList;
 
@@ -27,6 +27,17 @@ public class SongProvider extends ContentProvider {
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
 
+    static final int SONGS = 1;
+    static final int SONG_ID = 2;
+
+    static final UriMatcher uriMatcher;
+    static {
+        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcher.addURI(ProviderHelper.PROVIDER_NAME, "songs", SONGS);
+        uriMatcher.addURI(ProviderHelper.PROVIDER_NAME, "songs/#", SONG_ID);
+    }
+
+
     public SongProvider() {}
 
     public SongProvider(MainActivity mainActivity) {
@@ -34,82 +45,24 @@ public class SongProvider extends ContentProvider {
         songs = new ArrayList<>();
     }
 
-    public ArrayList getSongList() {
-        // Query external audio resources
-        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = mainActivity.getContentResolver()
-                .query(musicUri, null, null, null, null);
-        // Iterate over results if valid
-        if (musicCursor != null && musicCursor.moveToFirst()) {
-            // Get columns
-            int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int pathColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.RELATIVE_PATH);
-            int displayColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME);
-
-            do {
-                String path = musicCursor.getString(pathColumn);
-                String displayName = musicCursor.getString(displayColumn);
-                String pathUri = Environment.getExternalStorageDirectory().getPath() + "/" + path + displayName;
-
-                int thisId = musicCursor.getInt(idColumn);
-                String thisTitle = musicCursor.getString(titleColumn);
-                String thisArtist = musicCursor.getString(artistColumn);
-                songs.add(new Song(thisId, thisTitle, thisArtist, pathUri));
-            }
-            while (musicCursor.moveToNext());
-        }
-        return songs;
-    }
-
-
-
     @Override
     public boolean onCreate() {
         Context context = getContext();
         databaseHelper = new DatabaseHelper(context);
-
-        /**
-         * Create a write able database which will trigger its
-         * creation if it doesn't already exist.
-         */
-
         db = databaseHelper.getWritableDatabase();
         return (db == null) ? false : true;
     }
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection,
+                        @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(DatabaseHelper.PLAYLISTS_TABLE_NAME);
-
-//        switch (DatabaseHelper.uriMatcher.match(uri)) {
-//            case DatabaseHelper.SONGS:
-//                qb.setProjectionMap(DatabaseHelper.SONGS_PROJECTION_MAP);
-//                break;
-//
-//            case DatabaseHelper.SONG_ID:
-//                qb.appendWhere( DatabaseHelper.ID + "=" + uri.getPathSegments().get(1));
-//                break;
-//
-//            default:
-//        }
-//
-//        if (sortOrder == null || sortOrder == ""){
-//            /**
-//             * By default sort on student names
-//             */
-//            sortOrder = DatabaseHelper.TITLE;
-//        }
-        Cursor c = qb.query(db,	projection,	selection, selectionArgs,null, null, sortOrder);
-
-        /**
-         * register to watch a content URI for changes
-         */
-        c.setNotificationUri(getContext().getContentResolver(), uri);
-        return c;
+        qb.setTables(DatabaseHelper.SONGS_TABLE_NAME);
+        Cursor cursor = mainActivity.getContentResolver()
+                .query(ProviderHelper.EXTERNAL_CONTENT_URI, null, null, null, null);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Nullable
@@ -138,13 +91,13 @@ public class SongProvider extends ContentProvider {
         /**
          * Add a new student record
          */
-        long rowID = db.insert(databaseHelper.SONGS_TABLE_NAME, "", values);
+        long rowID = db.insert(DatabaseHelper.SONGS_TABLE_NAME, "", values);
 
         /**
          * If record is added successfully
          */
         if (rowID > 0) {
-            Uri _uri = ContentUris.withAppendedId(DatabaseProvider.CONTENT_URI, rowID);
+            Uri _uri = ContentUris.withAppendedId(ProviderHelper.SONG_CONTENT_URI, rowID);
             getContext().getContentResolver().notifyChange(_uri, null);
             return _uri;
         }

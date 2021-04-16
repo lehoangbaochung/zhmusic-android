@@ -20,14 +20,17 @@ public class OnlineFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_online, container, false);
-        refreshLayout = root.findViewById(R.id.refresh_layout);
-        refreshLayout.setOnRefreshListener(() -> {
-            refreshLayout.setRefreshing(false);
-        });
 
         SongAdapter songAdapter = new SongAdapter(getContext(), MainActivity.onlineSongList, true);
         lvSong = root.findViewById(R.id.online_song_listview);
         lvSong.setAdapter(songAdapter);
+
+        refreshLayout = root.findViewById(R.id.refresh_layout);
+        refreshLayout.setOnRefreshListener(() -> {
+            //
+            refreshLayout.setRefreshing(false);
+        });
+
         return root;
     }
 }

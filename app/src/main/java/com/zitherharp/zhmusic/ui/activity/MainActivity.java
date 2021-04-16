@@ -2,7 +2,9 @@ package com.zitherharp.zhmusic.ui.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +25,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.zitherharp.zhmusic.R;
 import com.zitherharp.zhmusic.model.Song;
-import com.zitherharp.zhmusic.provider.FirebaseProvider;
-import com.zitherharp.zhmusic.provider.SongProvider;
+import com.zitherharp.zhmusic.util.ProviderHelper;
+import com.zitherharp.zhmusic.util.DatabaseHelper;
 import com.zitherharp.zhmusic.util.IntentCode;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,14 +35,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
+    public static ArrayList<Song> songList;
+    public static ArrayList<Song> onlineSongList;
+
     AppBarConfiguration mAppBarConfiguration;
     NavController navController;
     Toolbar toolbar;
     TextView tvNavHeaderTitle, tvNavHeaderSubtitle;
     ImageView ivNavHeaderImage;
-    public static ArrayList<Song> songList;
-    public static ArrayList<Song> onlineSongList;
 
+    ProviderHelper databaseProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +69,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100) {
-            if (resultCode == Activity.RESULT_OK) {
-                // Nhận dữ liệu từ Intent trả về
-                final String account_display_name = data.getStringExtra("account_display_name");
-                final String account_user_name = data.getStringExtra("account_user_name");
-                //final String account_photo_uri = data.getStringExtra("account_photo_uri");
-                // Sử dụng kết quả result bằng cách hiện Toast
-                tvNavHeaderTitle.setText(account_display_name);
-                tvNavHeaderSubtitle.setText(account_user_name);
-                //ivNavHeaderImage.setImageURI(Uri.parse(account_photo_uri));
-            } else {
-                Toast.makeText(this, "Sign in unsucessfully", Toast.LENGTH_SHORT).show();
-            }
+        switch (requestCode) {
+            case IntentCode.SIGN_IN:
+                if (resultCode == Activity.RESULT_OK) {
+                    final String account_display_name = data.getStringExtra("account_display_name");
+                    final String account_user_name = data.getStringExtra("account_user_name");
+                    //final String account_photo_uri = data.getStringExtra("account_photo_uri");
+                    tvNavHeaderTitle.setText(account_display_name);
+                    tvNavHeaderSubtitle.setText(account_user_name);
+                    //ivNavHeaderImage.setImageURI(Uri.parse(account_photo_uri));
+                } else {
+                    Toast.makeText(this, "Sign in unsucessfully", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case IntentCode.PLAY_SONG:
+                if (resultCode == Activity.RESULT_OK) {
+
+                }
+                break;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        finish();
     }
 
     void findViewById() {
@@ -93,8 +108,7 @@ public class MainActivity extends AppCompatActivity {
         ivNavHeaderImage = navigationView.getHeaderView(0).findViewById(R.id.nav_user_avatar);
         // appBarConfiguration
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_online, R.id.nav_offline, R.id.nav_playlist)
-                .setDrawerLayout(drawer).build();
+                R.id.nav_home, R.id.nav_online, R.id.nav_offline, R.id.nav_playlist).setDrawerLayout(drawer).build();
         // navigationController
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -102,12 +116,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initialize() {
-        SongProvider songProvider = new SongProvider(this);
-        songList = songProvider.getSongList();
+        databaseProvider = new ProviderHelper(this);
+        // get offline songs
+        databaseProvider.retrieveOfflineSongs(ProviderHelper.EXTERNAL_CONTENT_URI);
+        songList = databaseProvider.getSongs();
+        // get online songs
+        databaseProvider.retrieveOnlineSongs("Vietnamese");
+        onlineSongList = databaseProvider.getSongs();
+        // sort songs
         Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
-
-        FirebaseProvider firebaseProvider = new FirebaseProvider();
-        onlineSongList = firebaseProvider.getSongs();
     }
 
     public void songPicked(@NotNull View v) {
@@ -118,12 +135,17 @@ public class MainActivity extends AppCompatActivity {
         String songFullTitle = songTitle + " - " + artistName;
         String videoId = v.getTag().toString();
 
+        TextView tvSongTitleBar = findViewById(R.id.bar_song_title);
+        TextView tvArtistNameBar = findViewById(R.id.bar_artist_name);
+        tvSongTitleBar.setText(songTitle);
+        tvArtistNameBar.setText(artistName);
+
         Intent playSong = new Intent(this, PlayerActivity.class);
         playSong.putExtra("song_title", songTitle);
         playSong.putExtra("artist_name", artistName);
         playSong.putExtra("song_full_title", songFullTitle);
         playSong.putExtra("video_id", videoId);
-        startActivity(playSong);
+        startActivityForResult(playSong, IntentCode.PLAY_SONG);
 
         Toast.makeText(this, "Playing: " + songFullTitle, Toast.LENGTH_LONG).show();
     }
@@ -141,10 +163,13 @@ public class MainActivity extends AppCompatActivity {
         final EditText input = new EditText(this);
         ad.setView(input);
         ad.setPositiveButton("OK", (dlg, which) -> {
-            String val = input.getText().toString();
-            String msg = String.format("Hello %s!", val);
-        });
+            // Add a new student record
+            ContentValues values = new ContentValues();
+            values.put(DatabaseHelper.TITLE, input.getText().toString());
 
+            Uri uri = getContentResolver().insert(ProviderHelper.PLAYLIST_CONTENT_URI, values);
+            Toast.makeText(this, uri.toString(), Toast.LENGTH_LONG).show();
+        });
         ad.setNegativeButton("Cancel", (dlg, which) -> dlg.cancel());
         ad.show();
     }

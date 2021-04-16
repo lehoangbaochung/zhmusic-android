@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zitherharp.zhmusic">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -17,29 +17,31 @@
         android:theme="@style/Theme.Zhmusic">
         <activity
             android:name=".ui.activity.PlayerActivity"
-            android:theme="@style/Theme.Zhmusic.NoActionBar"
-            android:launchMode="singleTask">
+            android:theme="@style/Theme.Zhmusic.NoActionBar">
         </activity>
         <activity
             android:name=".ui.activity.SigninActivity"
-            android:theme="@style/Theme.Zhmusic.NoActionBar"
-            android:launchMode="singleTask"
             android:label="Sign in">
         </activity>
         <activity
             android:name=".ui.activity.AboutActivity"
-            android:launchMode="singleTask"/>
+            android:label="About this app"/>
         <activity
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Zhmusic.NoActionBar">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+<!--        <provider-->
+<!--            android:name=".provider.PlaylistProvider"-->
+<!--            android:authorities="com.zitherharp.zhmusic.provider"-->
+<!--            android:multiprocess="true"/>-->
     </application>
 
 </manifest>

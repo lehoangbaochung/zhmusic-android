@@ -19,9 +19,10 @@ public class OfflineFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_offline, container, false);
 
-        SongAdapter songAdapter = new SongAdapter(getContext(), MainActivity.songList, true);
+        SongAdapter songAdapter = new SongAdapter(getContext(), MainActivity.songList, false);
         lvSong = root.findViewById(R.id.offline_song_listview);
         lvSong.setAdapter(songAdapter);
+
         return root;
     }
 }

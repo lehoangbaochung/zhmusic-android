@@ -5,27 +5,27 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
     static final String DATABASE_NAME = "Music";
     static final int DATABASE_VERSION = 1;
 
     public static final String SONGS_TABLE_NAME = "songs";
     public static final String PLAYLISTS_TABLE_NAME = "playlists";
 
-    static final String ID = "id";
-    static final String SONG_ID = "song_id";
-    static final String TITLE = "title";
-    static final String ARTIST_NAME = "artist_name";
+    public static final String ID = "id";
+    public static final String TITLE = "title";
+    public static final String SONG_ID = "song_id";
 
-    static final String CREATE_SONG_TABLE = "CREATE TABLE " + SONGS_TABLE_NAME +
+    // create table queries
+    public static final String CREATE_SONG_TABLE = "CREATE TABLE " + SONGS_TABLE_NAME +
             " (id INTEGER PRIMARY KEY AUTOINCREMENT, " + " title TEXT NOT NULL, " +
             " artist_name TEXT NOT NULL);";
-    static final String CREATE_PLAYLIST_TABLE = "CREATE TABLE " + PLAYLISTS_TABLE_NAME +
+    public static final String CREATE_PLAYLIST_TABLE = "CREATE TABLE " + PLAYLISTS_TABLE_NAME +
             " (id INTEGER PRIMARY KEY AUTOINCREMENT, " + " title TEXT NOT NULL, " +
             " song_id TEXT NOT NULL);";
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {

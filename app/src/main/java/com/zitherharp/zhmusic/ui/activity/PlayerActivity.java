@@ -31,6 +31,7 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
     OnlinePlayer onlinePlayer;
     YouTubePlayerView playerView;
 
+    Timer timer;
     String videoId;
 
     @Override
@@ -46,6 +47,8 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
+        timer.cancel();
+        timer.purge();
         super.onDestroy();
     }
 
@@ -101,8 +104,9 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
         }
     }
 
-    public void onTimer() {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+    void onTimer() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 runOnUiThread(() -> {
                     sbTime.setProgress(onlinePlayer.getCurrentTime());
@@ -151,18 +155,11 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
             downloadSong();
         } else if (id == R.id.share_button) {
             shareSong();
-        } else if (id ==R.id.playlist_button) {
+        } else if (id == R.id.playlist_button) {
             addToPlaylist();
         } else if (id == R.id.collapse_button) {
-            backMainActivity();
+            startActivity(new Intent(this, MainActivity.class));
         }
-    }
-
-    void backMainActivity() {
-        Intent backIntent = new Intent(this, MainActivity.class);
-        backIntent.putExtra("song_title_bar", tvSongTitle.getText().toString());
-        backIntent.putExtra("artist_name_bar", tvArtistName.getText().toString());
-        startActivity(backIntent);
     }
 
     void addToFavourite() {
@@ -200,8 +197,8 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
     void shareSong() {
         Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "I want to share a beautiful song with you");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Song title: " + tvSongTitle.getText()
-                + " \nArtist name: " + tvArtistName.getText());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s\n%s: %s",
+                "Song title", tvSongTitle.getText(), "Artist name", tvArtistName.getText()));
         startActivity(Intent.createChooser(shareIntent, "Share to..."));
     }
 
@@ -210,8 +207,7 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
         // Create the AlertDialog object and return it
         builder.setPositiveButton("Add", (dialog, id) -> {
 
-        })
-                .setNegativeButton("Cancel", (dialog, id) -> finish());
+        }).setNegativeButton("Cancel", (dialog, id) -> finish());
     }
 
     void play(boolean fromUser) {

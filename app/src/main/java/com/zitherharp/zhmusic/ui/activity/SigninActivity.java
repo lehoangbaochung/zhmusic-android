@@ -109,6 +109,8 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         Intent signInIntent = new Intent(this, MainActivity.class);
         signInIntent.putExtra("account_name", tvUserName.getText().toString());
         signInIntent.putExtra("account_info", tvUserInfo.getText().toString());
+        setResult(RESULT_OK, signInIntent);
+        finish();
         startActivity(signInIntent);
         Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show();
     }
