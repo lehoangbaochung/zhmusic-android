@@ -1,28 +1,21 @@
 package com.zitherharp.zhmusic.model;
 
-import android.net.Uri;
-
 public class Song {
-    public static final Song EMPTY_SONG
-            = new Song(-1, null, null, null);
-
-    public int id;
+    public int id, duration;
     public String title;
-    public String albumId;
-    public String albumName;
-    public Uri albumUri;
-    public String artistId;
-    public String artistName;
-    public String path;
-    public String videoId;
-    public int duration;
-    int year;
+    public String artistId, artistName;
+    public String albumId, albumTitle;
+    public String path, pathId;
+    public String lyricVietnamese, lyricPinyinChinese, lyricSimplifiedChinese, lyricTraditionalChinese;
 
-    public Song(int id, String title, String artistName, String videoId) {
+    public Song() {}
+
+    public Song(int id, String title, String artistName, String videoId, String albumId) {
         this.id = id;
         this.title = title;
         this.artistName = artistName;
-        this.videoId = videoId;
+        this.pathId = videoId;
+        this.albumId = albumId;
     }
 
     public Song(int id, String title, String artistName, int duration, String videoId, String albumId) {
@@ -30,7 +23,7 @@ public class Song {
         this.title = title;
         this.albumId = albumId;
         this.artistName = artistName;
-        this.videoId = videoId;
+        this.pathId = videoId;
         this.duration = duration;
     }
 
@@ -38,11 +31,15 @@ public class Song {
 
     public String getTitle() { return title; }
 
+    public String getArtistId() { return artistId; }
+
     public String getArtistName() { return artistName; }
 
-    public String getVideoId() { return videoId; }
+    public String getPathId() { return pathId; }
 
     public String getAlbumId() { return albumId; }
+
+    public String getAlbumTitle() { return albumTitle; }
 
     public int getDuration() {
         return duration;

@@ -6,14 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.common.SignInButton;
 import com.zitherharp.zhmusic.R;
 import com.zitherharp.zhmusic.model.Account;
-import com.zitherharp.zhmusic.signin.GoogleSignIn;
+import com.zitherharp.zhmusic.credential.GoogleSignIn;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,11 +59,6 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onClick(@NotNull View view) {
         switch (view.getId()) {
             case R.id.sign_in_button:
@@ -93,7 +87,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
 
     void displayAccount() {
         if (!isSignIn) {
-            ivUserAvatar.setImageResource(R.drawable.search);
+            ivUserAvatar.setImageResource(R.drawable.ring_btnplay);
             tvUserName.setText("Guest");
             tvUserInfo.setText("You are not signed in");
             tvStatus.setText("Signed out");
@@ -105,13 +99,11 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    void sendIntent() {
+    public void sendIntent() {
         Intent signInIntent = new Intent(this, MainActivity.class);
         signInIntent.putExtra("account_name", tvUserName.getText().toString());
         signInIntent.putExtra("account_info", tvUserInfo.getText().toString());
-        setResult(RESULT_OK, signInIntent);
+        setResult(RESULT_OK);
         finish();
-        startActivity(signInIntent);
-        Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show();
     }
 }

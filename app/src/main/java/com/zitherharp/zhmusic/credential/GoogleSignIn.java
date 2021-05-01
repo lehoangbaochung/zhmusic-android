@@ -1,4 +1,4 @@
-package com.zitherharp.zhmusic.signin;
+package com.zitherharp.zhmusic.credential;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -92,6 +92,7 @@ public class GoogleSignIn implements OnConnectionFailedListener {
     public void signOut() {
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(status -> {
             Toast.makeText(signinActivity, "Signed out", Toast.LENGTH_SHORT).show();
+            signinActivity.sendIntent();
         });
     }
 

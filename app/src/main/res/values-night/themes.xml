@@ -2,9 +2,14 @@
     <!-- Base application theme. -->
     <style name="Theme.Zhmusic" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/teal_200</item>
+        <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkDarkTheme</item>
+        <item name="colorAccent">@color/colorAccentDarkTheme</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="ThemeOverlay.Zhmusic.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+        <item name="fullscreenTextColor">@color/light_blue_A400</item>
     </style>
 </resources>

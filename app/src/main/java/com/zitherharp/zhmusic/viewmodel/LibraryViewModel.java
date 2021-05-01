@@ -37,7 +37,7 @@ public class LibraryViewModel extends ViewModel {
                 R.drawable.download_icon,
         };
 
-//        List<Song> songs = new SongAdapter().getSongList();
+//        List<Song> songs = new LibAdapter().getSongList();
 //        for (Song song : songs) {
 //            HashMap<String, String> hm = new HashMap<>();
 //            hm.put("txt", song.title);

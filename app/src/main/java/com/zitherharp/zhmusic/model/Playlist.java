@@ -4,16 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Playlist {
-    public final List<Song> songs;
-    public final String title;
+    final List<Song> songs;
+    final int id;
+    final String title;
 
-    public Playlist(String title) {
+    public Playlist(int id, String title) {
         songs = new ArrayList<>();
+        this.id = id;
         this.title = title;
     }
 
     public List<Song> getSongs() {
         return songs;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {

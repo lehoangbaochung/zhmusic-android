@@ -1,39 +1,33 @@
 package com.zitherharp.zhmusic.model;
 
-import androidx.annotation.NonNull;
+import com.zitherharp.zhmusic.provider.SongProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Album {
-    public final List<Song> songs;
+    public String id, title;
+    List<Song> songs;
 
-    public Album() {
-        songs = new ArrayList<>();
+    public Album(String id, String title) {
+        this.id = id;
+        this.title = title;
+        this.songs = new ArrayList<>();
     }
 
-    @NonNull
-    private Song getFirstSong() {
-        return songs.isEmpty() ? Song.EMPTY_SONG : songs.get(0);
+    public List<Song> getSongs() {
+        return songs;
     }
 
-    public String getTitle() {
-        return getFirstSong().albumName;
-    }
-
-    public String getArtistName() {
-        return getFirstSong().artistName;
-    }
-
-    public String getArtistId() {
-        return getFirstSong().artistId;
-    }
-
-    public int getSongCount() {
+    public int getCount() {
         return songs.size();
     }
 
-    public int getYear() {
-        return getFirstSong().year;
+    public void o() {
+        for (Song song : SongProvider.ONLINE_SONGS) {
+            if (id.equals(song.getAlbumId())) {
+                songs.add(song);
+            }
+        }
     }
 }

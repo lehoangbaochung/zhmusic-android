@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zitherharp.zhmusic.R;
@@ -14,15 +14,15 @@ import com.zitherharp.zhmusic.model.Song;
 
 import java.util.ArrayList;
 
-public class SongAdapter extends BaseAdapter {
+public class LibAdapter extends BaseAdapter {
     ArrayList<Song> songs;
     LayoutInflater layoutInflater;
     boolean isOnline;
 
-    public SongAdapter(Context c, ArrayList<Song> songs, boolean isOnline) {
+    public LibAdapter(Context context, ArrayList<Song> songs, boolean isOnline) {
         this.songs = songs;
         this.isOnline = isOnline;
-        layoutInflater = LayoutInflater.from(c);
+        layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -37,13 +37,13 @@ public class SongAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return songs.get(position).id;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Ánh xạ đến layout mỗi bài
-        LinearLayout songLayout = (LinearLayout)layoutInflater.inflate(R.layout.listview_item_tile, parent, false);
+        RelativeLayout songLayout = (RelativeLayout)layoutInflater.inflate(R.layout.item_song, parent, false);
         TextView songView = songLayout.findViewById(R.id.song_title);
         TextView artistView = songLayout.findViewById(R.id.artist_name);
 
@@ -55,11 +55,7 @@ public class SongAdapter extends BaseAdapter {
         artistView.setText(currentSong.getArtistName());
 
         // Cài đặt tag cho mỗi bài
-        if (isOnline) {
-            songLayout.setTag(currentSong.getVideoId());
-        } else {
-            songLayout.setTag(position);
-        }
+        songLayout.setTag(currentSong.getPathId());
 
         return songLayout;
     }

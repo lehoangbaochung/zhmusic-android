@@ -14,8 +14,8 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.zitherharp.zhmusic.util.DatabaseHelper;
-import com.zitherharp.zhmusic.util.ProviderHelper;
+import com.zitherharp.zhmusic.helper.DatabaseHelper;
+import com.zitherharp.zhmusic.helper.ProviderHelper;
 
 import java.util.HashMap;
 import java.util.Objects;

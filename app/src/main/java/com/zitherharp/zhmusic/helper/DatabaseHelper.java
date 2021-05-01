@@ -1,8 +1,10 @@
-package com.zitherharp.zhmusic.util;
+package com.zitherharp.zhmusic.helper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     static final String DATABASE_NAME = "Music";
@@ -17,8 +19,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // create table queries
     public static final String CREATE_SONG_TABLE = "CREATE TABLE " + SONGS_TABLE_NAME +
-            " (id INTEGER PRIMARY KEY AUTOINCREMENT, " + " title TEXT NOT NULL, " +
-            " artist_name TEXT NOT NULL);";
+            " (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, artist_name TEXT NOT NULL," +
+            " video_id TEXT NOT NULL, image_id TEXT NOT NULL);";
     public static final String CREATE_PLAYLIST_TABLE = "CREATE TABLE " + PLAYLISTS_TABLE_NAME +
             " (id INTEGER PRIMARY KEY AUTOINCREMENT, " + " title TEXT NOT NULL, " +
             " song_id TEXT NOT NULL);";
@@ -28,13 +30,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(@NotNull SQLiteDatabase db) {
         db.execSQL(CREATE_SONG_TABLE);
         db.execSQL(CREATE_PLAYLIST_TABLE);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + SONGS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PLAYLISTS_TABLE_NAME);
         onCreate(db);

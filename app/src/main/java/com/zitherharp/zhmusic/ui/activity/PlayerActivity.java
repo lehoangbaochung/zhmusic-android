@@ -14,10 +14,12 @@ import android.widget.Toast;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.zitherharp.zhmusic.R;
+import com.zitherharp.zhmusic.player.OfflinePlayer;
 import com.zitherharp.zhmusic.player.OnlinePlayer;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,11 +30,15 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
     ImageView btnFavourite, btnPlayback, btnDownload, btnShare, btnPlaylist;
     TextView tvCurrentTime, tvTotalTime;
     TextView tvSongTitle, tvArtistName, tvSongFullTitle;
+
     OnlinePlayer onlinePlayer;
+    OfflinePlayer offlinePlayer;
+
     YouTubePlayerView playerView;
 
     Timer timer;
     String videoId;
+    boolean isOnlinePlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +47,7 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
 
         findViewById();
         setOnClickListener();
-        displaySong();
+        loadSong();
         onTimer();
     }
 
@@ -49,6 +55,7 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
     protected void onDestroy() {
         timer.cancel();
         timer.purge();
+        offlinePlayer.pause();
         super.onDestroy();
     }
 
@@ -85,7 +92,7 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
         btnPlaylist.setOnClickListener(this);
     }
 
-    void displaySong() {
+    void loadSong() {
         Intent songIntent = getIntent();
         tvSongTitle.setText(songIntent.getStringExtra("song_title"));
         tvArtistName.setText(songIntent.getStringExtra("artist_name"));
@@ -93,14 +100,22 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
         videoId = songIntent.getStringExtra("video_id");
 
         onlinePlayer = new OnlinePlayer(this);
-        onlinePlayer.setVideoId(videoId);
-        onlinePlayer.onInitialize(playerView);
+        offlinePlayer = new OfflinePlayer();
 
-        try {
-            Integer.parseInt(videoId);
+        if (videoId.contains("/")) {
+            isOnlinePlayer = false;
             playerView.setVisibility(View.GONE);
-        } catch (NumberFormatException e) {
+            try {
+                offlinePlayer.setSong(videoId);
+                offlinePlayer.play();
+            } catch (IOException e) {
+                Toast.makeText(this, "Media error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            isOnlinePlayer = true;
             playerView.setVisibility(View.VISIBLE);
+            onlinePlayer.setVideoId(videoId);
+            onlinePlayer.onInitialize(playerView);
         }
     }
 
@@ -109,10 +124,17 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 runOnUiThread(() -> {
-                    sbTime.setProgress(onlinePlayer.getCurrentTime());
-                    sbTime.setMax(onlinePlayer.getTotalTime());
-                    tvCurrentTime.setText(onlinePlayer.getCurrentTimeToString());
-                    tvTotalTime.setText(onlinePlayer.getTotalTimeToString());
+                    if (isOnlinePlayer) {
+                        sbTime.setProgress(onlinePlayer.getCurrentTime());
+                        sbTime.setMax(onlinePlayer.getTotalTime());
+                        tvCurrentTime.setText(onlinePlayer.getCurrentTimeToString());
+                        tvTotalTime.setText(onlinePlayer.getTotalTimeToString());
+                    } else {
+                        sbTime.setProgress(offlinePlayer.getCurrentTime());
+                        sbTime.setMax(offlinePlayer.getTotalTime());
+                        tvCurrentTime.setText(offlinePlayer.getCurrentTimeToString());
+                        tvTotalTime.setText(offlinePlayer.getTotalTimeToString());
+                    }
                 });
             }
         }, 0, 1000);
@@ -121,7 +143,11 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    onlinePlayer.seekTo(progress);
+                    if (isOnlinePlayer) {
+                        onlinePlayer.seekTo(progress);
+                    } else {
+                        offlinePlayer.seekTo(progress);
+                    }
                 }
                 play(false);
             }
@@ -172,31 +198,47 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
     }
 
     void changePlaybackMode() {
-        int playbackMode = onlinePlayer.getPlaybackMode();
-        if (playbackMode == 0) {
-            onlinePlayer.setPlaybackMode(1);
-            btnPlayback.setImageResource(R.drawable.player_btn_repeatone_normal);
-            Toast.makeText(this, "Repeat one", Toast.LENGTH_SHORT).show();
-        } else if (playbackMode == 1) {
-            onlinePlayer.setPlaybackMode(2);
-            btnPlayback.setImageResource(R.drawable.player_btn_random_normal);
-            Toast.makeText(this, "Shuffle", Toast.LENGTH_SHORT).show();
+        if (isOnlinePlayer) {
+            int playbackMode = onlinePlayer.getPlaybackMode();
+            if (playbackMode == 0) {
+                onlinePlayer.setPlaybackMode(1);
+                btnPlayback.setImageResource(R.drawable.player_btn_repeatone_normal);
+                Toast.makeText(this, "Repeat one", Toast.LENGTH_SHORT).show();
+            } else if (playbackMode == 1) {
+                onlinePlayer.setPlaybackMode(2);
+                btnPlayback.setImageResource(R.drawable.player_btn_random_normal);
+                Toast.makeText(this, "Shuffle", Toast.LENGTH_SHORT).show();
+            } else {
+                onlinePlayer.setPlaybackMode(0);
+                btnPlayback.setImageResource(R.drawable.player_btn_repeat_normal);
+                Toast.makeText(this, "Repeat all", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            onlinePlayer.setPlaybackMode(0);
-            btnPlayback.setImageResource(R.drawable.player_btn_repeat_normal);
-            Toast.makeText(this, "Repeat all", Toast.LENGTH_SHORT).show();
+            if (offlinePlayer.isLooping()) {
+                offlinePlayer.setLooping(false);
+                btnPlayback.setImageResource(R.drawable.player_btn_repeat_normal);
+                Toast.makeText(this, "Repeat one is off", Toast.LENGTH_SHORT).show();
+            } else {
+                offlinePlayer.setLooping(true);
+                btnPlayback.setImageResource(R.drawable.player_btn_repeatone_normal);
+                Toast.makeText(this, "Repeat one is on", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     void downloadSong() {
-        Intent downloadIntent = new Intent(Intent.ACTION_VIEW);
-        downloadIntent.setData(Uri.parse("https://www.y2mate.com/youtube/" + videoId));
-        startActivity(downloadIntent);
+        if (isOnlinePlayer) {
+            Intent downloadIntent = new Intent(Intent.ACTION_VIEW);
+            downloadIntent.setData(Uri.parse("https://www.y2mate.com/youtube/" + videoId));
+            startActivity(downloadIntent);
+        } else {
+            Toast.makeText(this, "This song saved in your phone", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void shareSong() {
         Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "I want to share a beautiful song with you");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "I want to share a beautiful song with you!");
         shareIntent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s\n%s: %s",
                 "Song title", tvSongTitle.getText(), "Artist name", tvArtistName.getText()));
         startActivity(Intent.createChooser(shareIntent, "Share to..."));
@@ -212,18 +254,36 @@ public class PlayerActivity extends YouTubeBaseActivity implements View.OnClickL
 
     void play(boolean fromUser) {
         if (fromUser) {
-            if (onlinePlayer.isPlaying()) {
-                onlinePlayer.pause();
-                btnPlay.setImageResource(R.drawable.ring_btnplay);
+            if (isOnlinePlayer) {
+                if (onlinePlayer.isPlaying()) {
+                    onlinePlayer.pause();
+                    btnPlay.setImageResource(R.drawable.ring_btnplay);
+                } else {
+                    onlinePlayer.play();
+                    btnPlay.setImageResource(R.drawable.pause_button);
+                }
             } else {
-                onlinePlayer.play();
-                btnPlay.setImageResource(R.drawable.pause_button);
+                if (offlinePlayer.isPlaying()) {
+                    offlinePlayer.pause();
+                    btnPlay.setImageResource(R.drawable.ring_btnplay);
+                } else {
+                    offlinePlayer.play();
+                    btnPlay.setImageResource(R.drawable.pause_button);
+                }
             }
         } else {
-            if (onlinePlayer.isPlaying()) {
-                btnPlay.setImageResource(R.drawable.pause_button);
+            if (isOnlinePlayer) {
+                if (onlinePlayer.isPlaying()) {
+                    btnPlay.setImageResource(R.drawable.pause_button);
+                } else {
+                    btnPlay.setImageResource(R.drawable.ring_btnplay);
+                }
             } else {
-                btnPlay.setImageResource(R.drawable.ring_btnplay);
+                if (offlinePlayer.isPlaying()) {
+                    btnPlay.setImageResource(R.drawable.pause_button);
+                } else {
+                    btnPlay.setImageResource(R.drawable.ring_btnplay);
+                }
             }
         }
     }

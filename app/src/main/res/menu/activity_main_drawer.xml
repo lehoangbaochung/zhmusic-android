@@ -7,18 +7,59 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/nav_online"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_online" />
+            android:title="@string/song" />
         <item
             android:id="@+id/nav_offline"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_offline" />
+            android:title="@string/artist" />
+        <item
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/album" />
+        <item
+            android:id="@+id/nav_library"
+            android:title="@string/library" />
         <item
             android:id="@+id/nav_playlist"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_playlist" />
+            android:title="Playlist">
+            <menu>
+                <item
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="@string/album" />
+            </menu>
+        </item>
+    </group>
+
+    <group android:checkableBehavior="single">
+
+        <item
+
+            android:title="@string/playlists" />
+        <item
+
+            android:title="@string/folders" />
+        <item
+
+            android:title="@string/favourate" />
+        <item
+
+            android:title="@string/recent_play" />
+        <item
+
+            android:title="@string/recent_add" />
+
+        <item
+
+            android:title="@string/play_ranking" />
+
+    </group>
+
+    <group android:checkableBehavior="none">
+        <item android:title="@string/settings" />
+        <item android:title="@string/exit" />
     </group>
 </menu>
