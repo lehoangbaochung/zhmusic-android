@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/album" />
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/grid_layout_list_item_info_height"
+        android:layout_below="@id/item_image"
+        android:background="@color/album_default_palette_color_light">
+
+        <ImageView
+            android:id="@+id/popup_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+            app:tint="@color/background_floating_material_dark"
+            android:contentDescription="@string/album" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:paddingStart="@dimen/linear_layout_list_item_padding"
+            android:paddingEnd="@dimen/linear_layout_list_item_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/popup_menu"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ListItemTitleStyle"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/grid_layout_list_text_line_space">
+
+                <TextView
+                    android:id="@+id/item_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="@dimen/gird_layout_list_subtitle_max_width"
+                    android:layout_centerVertical="true"
+                    style="@style/ListItemSubTitleStyle"/>
+
+<!--                <View-->
+<!--                    android:id="@+id/divider_subtitle"-->
+<!--                    android:background="@color/colorDividerBlack"-->
+<!--                    android:layout_width="1.0dip"-->
+<!--                    android:layout_height="@dimen/text_vertical_divider_height"-->
+<!--                    android:layout_marginLeft="@dimen/linear_layout_list_text_line_space"-->
+<!--                    android:layout_marginRight="@dimen/linear_layout_list_text_line_space"-->
+<!--                    android:layout_toEndOf="@id/item_subtitle_left"-->
+<!--                    android:layout_centerVertical="true" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/item_subtitle_right"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:maxWidth="@dimen/gird_layout_list_subtitle_2_max_width"-->
+<!--                    android:layout_toEndOf="@id/divider_subtitle"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    style="@style/ListItemSubTitleStyle" />-->
+
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
