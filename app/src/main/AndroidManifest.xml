@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.zitherharp.zhmusic">
 
@@ -12,18 +13,22 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:supportsRtl="true"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
         android:installLocation="preferExternal"
         android:theme="@style/Theme.Zhmusic">
         <activity
             android:name=".ui.activity.LoginActivity"
             android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.activity.TabbberActivity"
@@ -43,11 +48,12 @@
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Zhmusic.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="com.zitherharp.zhmusic.provider"
+            android:name=".provider.LibraryProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -15,33 +15,31 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.zitherharp.zhmusic.R;
 import com.zitherharp.zhmusic.adapter.ItemAdapter;
 import com.zitherharp.zhmusic.provider.LibraryProvider;
-import com.zitherharp.zhmusic.provider.SongProvider;
-import com.zitherharp.zhmusic.viewholder.ItemViewHolder;
 
-public class ItemFragment extends Fragment {
+public class RecyclerViewFragment extends Fragment {
     RecyclerView recyclerView;
+    int itemType;
 
-    @Override
+    public RecyclerViewFragment(int itemType) {
+        this.itemType = itemType;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.layout_recycler_view, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        recyclerView = view.findViewById(R.id.recyclerview);
+        recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
-        switch (requireArguments().getInt("Library")) {
-            case 0:
+        if (requireArguments().getInt("State") == 0) { // online state
+            if (itemType == LibraryProvider.SONG) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                recyclerView.setAdapter(new ItemAdapter(getActivity(), LibraryProvider.SONGS, ItemViewHolder.LIST));
-                break;
-            case 1: case 2:
+            } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-                recyclerView.setAdapter(new ItemAdapter(getActivity(), SongProvider.ONLINE_SONGS, ItemViewHolder.GRID));
-                break;
-            default:
-                recyclerView.setAdapter(null);
+            }
+            recyclerView.setAdapter(new ItemAdapter(getContext(), itemType));
         }
     }
 }

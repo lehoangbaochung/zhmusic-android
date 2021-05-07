@@ -13,10 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.customview.widget.Openable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,30 +23,17 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.zitherharp.zhmusic.R;
-import com.zitherharp.zhmusic.credential.google.LoginCredential;
 import com.zitherharp.zhmusic.helper.DatabaseHelper;
 import com.zitherharp.zhmusic.helper.ProviderHelper;
-import com.zitherharp.zhmusic.model.Account;
-import com.zitherharp.zhmusic.model.Song;
-import com.zitherharp.zhmusic.provider.SongProvider;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class MainActivity extends AppCompatActivity {
-    public static ArrayList<Song> songList;
-    public static ArrayList<Song> onlineSongList;
-
     AppBarConfiguration mAppBarConfiguration;
-
     NavController navController;
     Toolbar toolbar;
     TextView tvNavHeaderTitle, tvNavHeaderSubtitle;
     ImageView ivNavHeaderImage;
-
-    public LoginCredential loginCredential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +41,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         findViewById();
-        initialize();
 
-        loginCredential = new LoginCredential(this);
-        loginCredential.getResultsFromApi();
-
-        Account account = loginCredential.getAccount();
-        if (account != null) {
-            tvNavHeaderTitle.setText(String.format("Hi, %s!", account.getDisplayName()));
-            tvNavHeaderSubtitle.setText(account.getUserName());
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        loginCredential.onActivityResult(requestCode, resultCode, data);
+        Intent loginAccount = getIntent();
+        tvNavHeaderTitle.setText(String.format("Hi, %s!", loginAccount.getStringExtra("loginName")));
+        tvNavHeaderSubtitle.setText(loginAccount.getStringExtra("loginEmail"));
     }
 
     @Override
@@ -85,34 +59,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void findViewById() {
-        // toolbar
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.main_layout);
-        // navigationView
+        Openable openable = findViewById(R.id.main_layout);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         tvNavHeaderTitle = navigationView.getHeaderView(0).findViewById(R.id.nav_user_name);
         tvNavHeaderSubtitle = navigationView.getHeaderView(0).findViewById(R.id.nav_user_info);
         ivNavHeaderImage = navigationView.getHeaderView(0).findViewById(R.id.nav_user_avatar);
-        // appBarConfiguration
-        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_library,
-                R.id.nav_home, R.id.nav_online, R.id.nav_offline, R.id.nav_playlist).setDrawerLayout(drawer).build();
-        // navigationController
+
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_song, R.id.nav_album, R.id.nav_artist, R.id.nav_playlist)
+                .setOpenableLayout(openable).build();
+
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
-    
-    void initialize() {
-        SongProvider songProvider = new SongProvider(this);
-        songProvider.retrieveOfflineSongs(ProviderHelper.EXTERNAL_CONTENT_URI);
-        songList = songProvider.getSongs();
-        Collections.sort(songList, (lhs, rhs) -> lhs.getTitle().compareTo(rhs.getTitle()));
-    }
 
     public void songPicked(@NotNull View v) {
-        TextView tvSongTitle = v.findViewById(R.id.song_title);
-        TextView tvArtistName = v.findViewById(R.id.artist_name);
+        TextView tvSongTitle = v.findViewById(R.id.item_title);
+        TextView tvArtistName = v.findViewById(R.id.item_subtitle);
         String songTitle = tvSongTitle.getText().toString();
         String artistName = tvArtistName.getText().toString();
         String songFullTitle = songTitle + " - " + artistName;
@@ -134,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goSigninActivity(View v) {
-        startActivity(new Intent(this, LoginActivity.class));
+        finishAffinity();
     }
 
     public void addPlaylist(MenuItem item) {
@@ -150,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             ad.setPositiveButton("OK", (dlg, which) -> {
                 // Add a new playlist record
                 ContentValues values = new ContentValues();
-                values.put(DatabaseHelper.TITLE, input.getText().toString());
+                values.put(DatabaseHelper.ARTIST_TABLE_NAME, input.getText().toString());
 
                 Uri uri = getContentResolver().insert(ProviderHelper.PLAYLIST_CONTENT_URI, values);
                 Toast.makeText(this, uri.toString(), Toast.LENGTH_LONG).show();

@@ -15,7 +15,7 @@ import com.zitherharp.zhmusic.R;
 import com.zitherharp.zhmusic.adapter.ViewPagerAdapter;
 import com.zitherharp.zhmusic.provider.LibraryProvider;
 
-public class AlbumFragment extends Fragment {
+public class SongFragment extends Fragment {
     TabLayout tabLayout;
     ViewPager2 viewPager;
     ViewPagerAdapter viewPagerAdapter;
@@ -27,10 +27,11 @@ public class AlbumFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        viewPagerAdapter = new ViewPagerAdapter(this, LibraryProvider.ALBUM);
+        viewPagerAdapter = new ViewPagerAdapter(this, LibraryProvider.SONG);
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager = view.findViewById(R.id.view_pager);
         viewPager.setAdapter(viewPagerAdapter);
+        viewPagerAdapter.onAttach(tabLayout, viewPager);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -55,7 +56,5 @@ public class AlbumFragment extends Fragment {
                 super.onPageSelected(position);
             }
         });
-
-        viewPagerAdapter.onAttach(tabLayout, viewPager);
     }
 }

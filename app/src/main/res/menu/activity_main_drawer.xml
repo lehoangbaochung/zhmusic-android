@@ -9,52 +9,35 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/home" />
         <item
-            android:id="@+id/nav_online"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/song" />
-        <item
-            android:id="@+id/nav_offline"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/artist" />
-        <item
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/album" />
-        <item
-            android:id="@+id/nav_library"
-            android:title="@string/library" />
-        <item
-            android:id="@+id/nav_playlist"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Playlist">
+            android:title="Library">
             <menu>
                 <item
+                    android:id="@+id/nav_song"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="@string/song" />
+                <item
+                    android:id="@+id/nav_artist"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="@string/artist" />
+                <item
+                    android:id="@+id/nav_album"
                     android:icon="@drawable/ic_menu_gallery"
                     android:title="@string/album" />
             </menu>
         </item>
-    </group>
-
-    <group android:checkableBehavior="single">
 
         <item
-
-            android:title="@string/playlists" />
-        <item
-
-            android:title="@string/folders" />
-        <item
-
-            android:title="@string/favourate" />
-        <item
-
-            android:title="@string/recent_play" />
-        <item
-
-            android:title="@string/recent_add" />
-
-        <item
-
-            android:title="@string/play_ranking" />
+            android:title="Playlist">
+            <menu>
+                <item
+                    android:id="@+id/nav_library"
+                    android:title="@string/library" />
+                <item
+                    android:id="@+id/nav_playlist"
+                    android:title="Playlist">
+                </item>
+            </menu>
+        </item>
 
     </group>
 

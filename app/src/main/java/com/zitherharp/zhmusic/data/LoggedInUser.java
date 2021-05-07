@@ -1,7 +1,7 @@
-package com.zitherharp.zhmusic.data.model;
+package com.zitherharp.zhmusic.data;
 
 /**
- * Data class that captures user information for logged in users retrieved from LoginRepository
+ * Data class that captures user information for logged in users retrieved from SongAdapter
  */
 public class LoggedInUser {
 

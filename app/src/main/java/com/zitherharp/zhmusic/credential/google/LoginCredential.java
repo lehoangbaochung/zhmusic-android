@@ -141,6 +141,12 @@ public class LoginCredential implements EasyPermissions.PermissionCallbacks {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
+    public void signOut() {
+        SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+    }
+
     public GoogleAccountCredential getCredential() {
         return credential;
     }

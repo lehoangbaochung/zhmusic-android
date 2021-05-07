@@ -1,4 +1,4 @@
-package com.zitherharp.zhmusic.ui.login;
+package com.zitherharp.zhmusic.login;
 
 /**
  * Class exposing authenticated user details to the UI.

@@ -1,4 +1,4 @@
-package com.zitherharp.zhmusic.ui.login;
+package com.zitherharp.zhmusic.login;
 
 import android.util.Patterns;
 
@@ -7,17 +7,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.zitherharp.zhmusic.R;
-import com.zitherharp.zhmusic.data.LoginRepository;
-import com.zitherharp.zhmusic.data.Result;
-import com.zitherharp.zhmusic.data.model.LoggedInUser;
+import com.zitherharp.zhmusic.adapter.SongAdapter;
 
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
+    private SongAdapter loginRepository;
 
-    LoginViewModel(LoginRepository loginRepository) {
+    LoginViewModel(SongAdapter loginRepository) {
         this.loginRepository = loginRepository;
     }
 
@@ -31,14 +29,7 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
 
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-        }
     }
 
     public void loginDataChanged(String username, String password) {

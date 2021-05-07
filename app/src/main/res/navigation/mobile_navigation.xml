@@ -3,30 +3,30 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/nav_library">
+    app:startDestination="@+id/nav_home">
 
     <fragment
-        android:id="@+id/nav_main"
-        android:name="com.zitherharp.zhmusic.ui.fragment.MainFragment"
-        tools:layout="@layout/fragment_main" />
+        android:id="@+id/nav_home"
+        android:name="com.zitherharp.zhmusic.ui.fragment.HomeFragment"
+        tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_online"
-        android:name="com.zitherharp.zhmusic.ui.fragment.ItemFragment"
-        tools:layout="@layout/layout_recycler_view" />
+        android:id="@+id/nav_song"
+        android:name="com.zitherharp.zhmusic.ui.fragment.SongFragment"
+        tools:layout="@layout/fragment_view_pager" />
 
     <fragment
-        android:id="@+id/nav_offline"
-        android:name="com.zitherharp.zhmusic.ui.fragment.OfflineFragment"
-        tools:layout="@layout/fragment_offline" />
+        android:id="@+id/nav_album"
+        android:name="com.zitherharp.zhmusic.ui.fragment.AlbumFragment"
+        tools:layout="@layout/fragment_view_pager" />
+
+    <fragment
+        android:id="@+id/nav_artist"
+        android:name="com.zitherharp.zhmusic.ui.fragment.ArtistFragment"
+        tools:layout="@layout/fragment_view_pager" />
 
     <fragment
         android:id="@+id/nav_playlist"
         android:name="com.zitherharp.zhmusic.ui.fragment.PlaylistFragment"
         tools:layout="@layout/fragment_playlist" />
-
-    <fragment
-        android:id="@+id/nav_library"
-        android:name="com.zitherharp.zhmusic.ui.fragment.LibraryFragment"
-        tools:layout="@layout/fragment_library" />
 </navigation>

@@ -3,7 +3,7 @@ package com.zitherharp.zhmusic.util;
 public class RequestCode {
     // Launch activities
     public static final int MAIN_ACTIVITY = 1000;
-    public static final int SIGN_IN = 1001;
+    public static final int LOGIN_ACTIVITY = 1001;
     public static final int PLAY_SONG = 1002;
 
     // Google Authorization

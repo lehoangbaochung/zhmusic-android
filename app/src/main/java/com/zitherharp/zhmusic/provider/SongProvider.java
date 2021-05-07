@@ -8,20 +8,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.zitherharp.zhmusic.helper.DatabaseHelper;
 import com.zitherharp.zhmusic.helper.ProviderHelper;
 import com.zitherharp.zhmusic.model.Song;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SongProvider extends ContentProvider {
-    public static List<Song> ONLINE_SONGS;
     public ArrayList<Song> songs;
     Context context;
 
@@ -55,7 +55,7 @@ public class SongProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection,
                         @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(DatabaseHelper.SONGS_TABLE_NAME);
+        qb.setTables(DatabaseHelper.SONG_TABLE_NAME);
         Cursor cursor = context.getContentResolver()
                 .query(ProviderHelper.EXTERNAL_CONTENT_URI, null, null, null, null);
         cursor.setNotificationUri(context.getContentResolver(), uri);
@@ -91,11 +91,13 @@ public class SongProvider extends ContentProvider {
         return 0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     public void retrieveOfflineSongs(Uri contentUri) {
         songs = new ArrayList<>();
         Cursor cursor = new SongProvider(context).query(contentUri, null, null, null, null);
 
-        if (cursor != null & cursor.moveToFirst()) {
+        assert cursor != null;
+        if (cursor.moveToFirst()) {
             int idColumn = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int titleColumn = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int artistColumn = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
@@ -110,7 +112,6 @@ public class SongProvider extends ContentProvider {
                 int thisId = cursor.getInt(idColumn);
                 String thisTitle = cursor.getString(titleColumn);
                 String thisArtist = cursor.getString(artistColumn);
-                songs.add(new Song(thisId, thisTitle, thisArtist, pathUri, ""));
             }
             while (cursor.moveToNext());
             cursor.close();

@@ -11,20 +11,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class SongHelper {
+public class LibraryHelper {
     static final String IMAGE_CODE = "R300x300M000";
     static final String ARTIST_ID = "T001";
     static final String ALBUM_ID = "T002";
     static final String SERVER_URL = "https://y.gtimg.cn/music/photo_new/";
     static final String IMAGE_EXTENSION = ".jpg";
 
+    static Song song;
     Activity activity;
-    Song song;
     Bitmap bitmap;
 
-    public SongHelper(Activity activity, Song song) {
+    public LibraryHelper(Activity activity, Song song) {
         this.activity = activity;
-        this.song = song;
+        LibraryHelper.song = song;
     }
 
     public void setImage(ImageView imageView) {
@@ -38,6 +38,8 @@ public class SongHelper {
             activity.runOnUiThread(() -> {
                 if (bitmap != null) {
                     imageView.setImageBitmap(bitmap);
+                } else {
+                    imageView.setImageBitmap(null);
                 }
             });
         }).start();

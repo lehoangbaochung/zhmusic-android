@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment;
 
 import com.zitherharp.zhmusic.R;
 
-public class MainFragment extends Fragment {
+public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 }

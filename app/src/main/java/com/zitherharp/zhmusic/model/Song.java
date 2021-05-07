@@ -1,47 +1,131 @@
 package com.zitherharp.zhmusic.model;
 
 public class Song {
-    public int id, duration;
-    public String title;
+    public final String id, videoId;
     public String artistId, artistName;
     public String albumId, albumTitle;
-    public String path, pathId;
-    public String lyricVietnamese, lyricPinyinChinese, lyricSimplifiedChinese, lyricTraditionalChinese;
+    public final String vietnameseTitle, pinyinTitle, simplifiedChineseTitle, traditionalChineseTitle;
+    public final String vietnameseLyric, pinyinLyric, simplifiedChineseLyric, traditionalChineseLyric;
+    public final String vietnameseDescription, simplifiedChineseDescription, traditionalChineseDescription;
+    public final String genre;
 
-    public Song() {}
-
-    public Song(int id, String title, String artistName, String videoId, String albumId) {
+    public Song(String id, String videoId, String artistId, String albumId,
+                String vietnameseTitle, String pinyinTitle, String simplifiedChineseTitle, String traditionalChineseTitle,
+                String vietnameseLyric, String pinyinLyric, String simplifiedChineseLyric, String traditionalChineseLyric,
+                String vietnameseDescription, String simplifiedChineseDescription, String traditionalChineseDescription,
+                String genre) {
         this.id = id;
-        this.title = title;
-        this.artistName = artistName;
-        this.pathId = videoId;
+        this.videoId = videoId;
+        this.artistId = artistId;
         this.albumId = albumId;
+        this.vietnameseTitle = vietnameseTitle;
+        this.pinyinTitle = pinyinTitle;
+        this.simplifiedChineseTitle = simplifiedChineseTitle;
+        this.traditionalChineseTitle = traditionalChineseTitle;
+        this.vietnameseLyric = vietnameseLyric;
+        this.pinyinLyric = pinyinLyric;
+        this.simplifiedChineseLyric = simplifiedChineseLyric;
+        this.traditionalChineseLyric = traditionalChineseLyric;
+        this.vietnameseDescription = vietnameseDescription;
+        this.simplifiedChineseDescription = simplifiedChineseDescription;
+        this.traditionalChineseDescription = traditionalChineseDescription;
+        this.genre = genre;
     }
 
-    public Song(int id, String title, String artistName, int duration, String videoId, String albumId) {
+    public Song(String id, String videoId, String artistId, String artistName, String albumId, String albumTitle,
+                String vietnameseTitle, String pinyinTitle, String simplifiedChineseTitle, String traditionalChineseTitle,
+                String vietnameseLyric, String pinyinLyric, String simplifiedChineseLyric, String traditionalChineseLyric,
+                String vietnameseDescription, String simplifiedChineseDescription, String traditionalChineseDescription,
+                String genre) {
         this.id = id;
-        this.title = title;
-        this.albumId = albumId;
+        this.videoId = videoId;
+        this.artistId = artistId;
         this.artistName = artistName;
-        this.pathId = videoId;
-        this.duration = duration;
+        this.albumId = albumId;
+        this.albumTitle = albumTitle;
+        this.vietnameseTitle = vietnameseTitle;
+        this.pinyinTitle = pinyinTitle;
+        this.simplifiedChineseTitle = simplifiedChineseTitle;
+        this.traditionalChineseTitle = traditionalChineseTitle;
+        this.vietnameseLyric = vietnameseLyric;
+        this.pinyinLyric = pinyinLyric;
+        this.simplifiedChineseLyric = simplifiedChineseLyric;
+        this.traditionalChineseLyric = traditionalChineseLyric;
+        this.vietnameseDescription = vietnameseDescription;
+        this.simplifiedChineseDescription = simplifiedChineseDescription;
+        this.traditionalChineseDescription = traditionalChineseDescription;
+        this.genre = genre;
     }
 
-    public int getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
+    public String getVideoId() {
+        return videoId;
+    }
 
-    public String getArtistId() { return artistId; }
+    public String getArtistId() {
+        return artistId;
+    }
 
-    public String getArtistName() { return artistName; }
+    public String getArtistName() {
+        return artistName;
+    }
 
-    public String getPathId() { return pathId; }
+    public String getAlbumId() {
+        return albumId;
+    }
 
-    public String getAlbumId() { return albumId; }
+    public String getAlbumTitle() {
+        return albumTitle;
+    }
 
-    public String getAlbumTitle() { return albumTitle; }
+    public String getVietnameseTitle() {
+        return vietnameseTitle;
+    }
 
-    public int getDuration() {
-        return duration;
+    public String getPinyinTitle() {
+        return pinyinTitle;
+    }
+
+    public String getSimplifiedChineseTitle() {
+        return simplifiedChineseTitle;
+    }
+
+    public String getTraditionalChineseTitle() {
+        return traditionalChineseTitle;
+    }
+
+    public String getVietnameseLyric() {
+        return vietnameseLyric;
+    }
+
+    public String getPinyinLyric() {
+        return pinyinLyric;
+    }
+
+    public String getSimplifiedChineseLyric() {
+        return simplifiedChineseLyric;
+    }
+
+    public String getTraditionalChineseLyric() {
+        return traditionalChineseLyric;
+    }
+
+    public String getVietnameseDescription() {
+        return vietnameseDescription;
+    }
+
+    public String getSimplifiedChineseDescription() {
+        return simplifiedChineseDescription;
+    }
+
+    public String getTraditionalChineseDescription() {
+        return traditionalChineseDescription;
+    }
+
+    public String getGenre() {
+        return genre;
     }
 }

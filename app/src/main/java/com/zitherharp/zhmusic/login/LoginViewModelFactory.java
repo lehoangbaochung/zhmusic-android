@@ -1,11 +1,11 @@
-package com.zitherharp.zhmusic.ui.login;
+package com.zitherharp.zhmusic.login;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
-import com.zitherharp.zhmusic.data.LoginDataSource;
-import com.zitherharp.zhmusic.data.LoginRepository;
+import com.zitherharp.zhmusic.adapter.ArtistAdapter;
+import com.zitherharp.zhmusic.adapter.SongAdapter;
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
@@ -18,7 +18,7 @@ public class LoginViewModelFactory implements ViewModelProvider.Factory {
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(LoginViewModel.class)) {
-            return (T) new LoginViewModel(LoginRepository.getInstance(new LoginDataSource()));
+            return (T) new LoginViewModel(SongAdapter.getInstance(new ArtistAdapter()));
         } else {
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
